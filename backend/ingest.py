@@ -11,8 +11,14 @@ def ingest_csv(csv_path: Path = DEFAULT_CSV_PATH, db_path: Path = DEFAULT_DB_PAT
         raise FileNotFoundError(f"CSV file not found: {csv_path}")
 
     con = get_connection(db_path)
-    run_schema(con)
+    run_schema(con)  # no-op if raw_events already exists (CREATE TABLE IF NOT EXISTS)
+
+    # Wipe existing rows first so re-running ingest is idempotent (no duplicate rows
+    # if you load the same CSV twice).
     con.execute("DELETE FROM raw_events")
+
+    # DuckDB can read a CSV straight into a query - no pandas/csv module needed.
+    # read_csv() infers types and header=true skips the header row.
     con.execute(
         f"INSERT INTO raw_events SELECT * FROM read_csv('{csv_path.as_posix()}', header=true)"
     )
@@ -22,6 +28,7 @@ def ingest_csv(csv_path: Path = DEFAULT_CSV_PATH, db_path: Path = DEFAULT_DB_PAT
 
 
 def main() -> None:
+    # Lets this module be run as a CLI: `python -m backend.ingest [csv_path] [--db-path ...]`
     parser = argparse.ArgumentParser(description="Ingest a CSV file into the raw_events table")
     parser.add_argument("csv_path", nargs="?", default=str(DEFAULT_CSV_PATH))
     parser.add_argument("--db-path", default=str(DEFAULT_DB_PATH))
