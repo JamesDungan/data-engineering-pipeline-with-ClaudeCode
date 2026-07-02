@@ -15,7 +15,8 @@ In this MVP, we build a simple but credible analytics pipeline that:
 
 The full flow looks like this:
 
-```CSV file
+```
+CSV file
   ↓
 raw_events        (raw ingestion, 1:1 with source)
   ↓
@@ -23,7 +24,8 @@ fct_events        (typed, deduplicated, transformed)
   ↓
 metrics           (daily count, 7-day rolling avg, top category)
   ↓
-Streamlit UI      (local dashboard)```
+Streamlit UI      (local dashboard)
+```
 
 ## Stack
 
