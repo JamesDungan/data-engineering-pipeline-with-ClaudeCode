@@ -1,0 +1,19 @@
+[project]
+name = "data-engineering-pipeline-with-claudecode"
+version = "0.1.0"
+description = "MVP data pipeline: CSV -> DuckDB -> transform -> metrics -> Streamlit dashboard"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "duckdb>=1.0.0",
+    "streamlit>=1.35.0",
+    "pydantic>=2.7.0",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.1.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
